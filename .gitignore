@@ -1,0 +1,47 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+venv/
+
+# Build outputs
+build/
+dist/
+*.spec.bak
+
+# Portable/generated app outputs
+output/
+TDSYNNEX-CB-LogParser-portable.zip
+*.exe
+*.dll
+*.zip
+*.7z
+
+# Customer/log artifacts
+*.etl
+*.pml
+*.dmp
+*.dmp.zip
+*.pcap
+*.pcapng
+*.evtx
+*.cab
+*.db
+*.sqlite
+*.log
+
+# Local scan output
+TDSYNNEX-CB-LogParser/
+scan-*/
+
+# Release handoff artifacts
+release_artifacts/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

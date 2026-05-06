@@ -1,0 +1,48 @@
+{
+  "application": {
+    "name": "TDSYNNEX Carbon Black Log Parser",
+    "mode": "portable",
+    "local_only": true
+  },
+  "paths": {
+    "default_output_folder": "output",
+    "rules_folder": "rules",
+    "templates_folder": "templates",
+    "default_output_base": "Desktop",
+    "default_output_folder_name": "TDSYNNEX-CB-LogParser",
+    "case_folder_template": "Case-{case_number}-scan-{timestamp}"
+  },
+  "runtime_guards": {
+    "network_calls_allowed": false,
+    "telemetry_allowed": false,
+    "auto_update_allowed": false,
+    "requires_admin": false,
+    "writes_registry": false,
+    "installs_services": false,
+    "installs_scheduled_tasks": false
+  },
+  "reports": {
+    "formats": [
+      "csv",
+      "html",
+      "txt"
+    ],
+    "include_generic_hits": false,
+    "max_examples_per_rule_in_report": 25,
+    "max_report_examples_per_rule": 25,
+    "max_report_raw_line_chars": 2000,
+    "always_write_partial_reports": true
+  },
+  "extraction": {
+    "max_archive_depth": 5,
+    "max_total_extracted_bytes": 1073741824,
+    "max_single_file_bytes": 268435456
+  },
+  "scanning": {
+    "large_file_warning_bytes": 268435456,
+    "text_stream_chunk_lines": 10000,
+    "binary_chunk_bytes": 8388608,
+    "binary_overlap_bytes": 4096,
+    "max_context_chars": 4000
+  }
+}
