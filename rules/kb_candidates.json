@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "description": "Carbon Black App Control KB candidates. Entries are candidate references only, not confirmed root causes.",
+  "candidates": [
+    {
+      "kb_id": "286607",
+      "label": "KB candidate 286607",
+      "title": "Communication & Port Requirements",
+      "root_cause_status": "candidate_only"
+    },
+    {
+      "kb_id": "286690",
+      "label": "KB candidate 286690",
+      "title": "Troubleshooting Disconnected Agents and Testing Network Connectivity",
+      "root_cause_status": "candidate_only"
+    },
+    {
+      "kb_id": "290083",
+      "label": "KB candidate 290083",
+      "title": "Disconnected Agent TIME_WAIT / 41002",
+      "root_cause_status": "candidate_only"
+    },
+    {
+      "kb_id": "290752",
+      "label": "KB candidate 290752",
+      "title": "New Agent Not Connecting to Server / GetSslError[16]",
+      "root_cause_status": "candidate_only"
+    },
+    {
+      "kb_id": "286506",
+      "label": "KB candidate 286506",
+      "title": "Communication Key Overuse",
+      "root_cause_status": "candidate_only"
+    },
+    {
+      "kb_id": "286600",
+      "label": "KB candidate 286600",
+      "title": "Troubleshooting Approvals Out of Date",
+      "root_cause_status": "candidate_only"
+    },
+    {
+      "kb_id": "286461",
+      "label": "KB candidate 286461",
+      "title": "Check CDC Status and Connectivity",
+      "root_cause_status": "candidate_only"
+    },
+    {
+      "kb_id": "286448",
+      "label": "KB candidate 286448",
+      "title": "CDC unavailable longer than 3 hours",
+      "root_cause_status": "candidate_only"
+    },
+    {
+      "kb_id": "287525",
+      "label": "KB candidate 287525",
+      "title": "Reporter Log Error WSE2127",
+      "root_cause_status": "candidate_only"
+    },
+    {
+      "kb_id": "429723",
+      "label": "KB candidate 429723",
+      "title": "Reputation Sync Errors Due to SecurityToken Expired",
+      "root_cause_status": "candidate_only"
+    },
+    {
+      "kb_id": "417114",
+      "label": "KB candidate 417114",
+      "title": "Reputation Sync Errors Continue After Server Upgrade",
+      "root_cause_status": "candidate_only"
+    },
+    {
+      "kb_id": "291435",
+      "label": "KB candidate 291435",
+      "title": "Database timeout expired",
+      "root_cause_status": "candidate_only"
+    },
+    {
+      "kb_id": "436182",
+      "label": "KB candidate 436182",
+      "title": "SQL Server Missing Role AppCWebServer",
+      "root_cause_status": "candidate_only"
+    },
+    {
+      "kb_id": "286112",
+      "label": "KB candidate 286112",
+      "title": "Troubleshooting Unexpected Blocks",
+      "root_cause_status": "candidate_only"
+    },
+    {
+      "kb_id": "288536",
+      "label": "KB candidate 288536",
+      "title": "Tamper Protection",
+      "root_cause_status": "candidate_only"
+    },
+    {
+      "kb_id": "288544",
+      "label": "KB candidate 288544",
+      "title": "Kernel Assertion errors",
+      "root_cause_status": "candidate_only"
+    },
+    {
+      "kb_id": "291656",
+      "label": "KB candidate 291656",
+      "title": "Upgrade Attempts Without .NET 4.8",
+      "root_cause_status": "candidate_only"
+    },
+    {
+      "kb_id": "417596",
+      "label": "KB candidate 417596",
+      "title": "ParityReporter fails after upgrade",
+      "root_cause_status": "candidate_only"
+    },
+    {
+      "kb_id": "290653",
+      "label": "KB candidate 290653",
+      "title": "Upgrade Did Not Start After Download",
+      "root_cause_status": "candidate_only"
+    }
+  ]
+}
