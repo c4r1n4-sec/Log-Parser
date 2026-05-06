@@ -24,6 +24,7 @@ TDSYNNEX-CB-LogParser/
   output/
     README.txt
   DROP-CUSTOMER-LOGS-HERE.bat
+  README-DROP-MODE.txt
   README.txt
 ```
 

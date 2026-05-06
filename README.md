@@ -51,7 +51,7 @@ to run from an extracted folder without installation.
 
 Engineers can scan customer artifacts without opening the GUI by dragging files,
 folders, ZIPs, PDFs, and other logs onto the packaged EXE or onto
-`DROP-CUSTOMER-LOGS-HERE.bat` in the portable folder. From source, run:
+`DROP-CUSTOMER-LOGS-HERE.bat` in the portable folder. See `README-DROP-MODE.txt` for manual BAT validation steps. From source, run:
 
 ```powershell
 python -m app.drop_target "C:\Cases\customerlogs.zip" "C:\Cases\Broadcom StandardReport.pdf"
