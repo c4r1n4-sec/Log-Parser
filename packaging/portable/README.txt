@@ -22,4 +22,3 @@ Drag-and-drop command-line mode:
 - Drop customer logs, ZIPs, PDFs, or folders onto TDSYNNEX-CB-LogParser.exe.
 - Or drop them onto DROP-CUSTOMER-LOGS-HERE.bat to keep the console open.
 - Reports are written to Documents\TDSYNNEX-CB-LogParser\scan-YYYYMMDD-HHMMSS by default.
-

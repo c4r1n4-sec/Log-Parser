@@ -194,4 +194,3 @@ The script writes the following files under `release_artifacts/`:
 If a machine is only validating source artifacts and has not produced the
 PyInstaller folder yet, run the script with `--allow-missing-dist`; the summary
 will explicitly state that the dist ZIP was not created.
-

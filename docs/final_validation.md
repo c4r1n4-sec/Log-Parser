@@ -1,7 +1,7 @@
 # Final portable drag/drop validation
 
-Validation date: 2026-05-06  
-Validation environment: Linux container at `/workspace/Log-Parser` with Python 3.10.19.  
+Validation date: 2026-05-06
+Validation environment: Linux container at `/workspace/Log-Parser` with Python 3.10.19.
 Portable Windows build status: **not produced in this environment** because PyInstaller is not installed and PowerShell is unavailable.
 
 ## Commands run
