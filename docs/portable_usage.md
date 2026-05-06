@@ -118,15 +118,27 @@ string fallback when helper decoding is unavailable.
 
 ## Building the portable folder
 
-From a Windows development machine with Python and dependencies installed:
+From a Windows development machine with Python available:
 
 ```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-python -m pip install pyinstaller
-pyinstaller --clean --noconfirm packaging\pyinstaller\app.spec
+.\build-portable.ps1
+```
+
+Or from Command Prompt:
+
+```bat
+build-portable.bat
+```
+
+The script creates/uses `.venv`, installs requirements and PyInstaller, runs
+tests, runs `packaging\pyinstaller\drop_target.spec`, verifies the EXE, copies
+`DROP-CUSTOMER-LOGS-HERE.bat` and `README-DROP-MODE.txt` into the portable
+folder, and creates `dist\TDSYNNEX-CB-LogParser-portable.zip`.
+
+Manual PyInstaller command if the environment is already prepared:
+
+```powershell
+pyinstaller --clean --noconfirm packaging\pyinstaller\drop_target.spec
 ```
 
 The resulting folder is:
@@ -137,10 +149,16 @@ dist\TDSYNNEX-CB-LogParser\
 
 ## Creating a portable ZIP
 
-From the `dist` directory:
+`build-portable.ps1` creates the ZIP automatically at:
+
+```text
+dist\TDSYNNEX-CB-LogParser-portable.zip
+```
+
+Manual ZIP creation from the `dist` directory:
 
 ```powershell
-Compress-Archive -Path .\TDSYNNEX-CB-LogParser -DestinationPath .\TDSYNNEX-CB-LogParser.zip -Force
+Compress-Archive -Path .\TDSYNNEX-CB-LogParser -DestinationPath .\TDSYNNEX-CB-LogParser-portable.zip -Force
 ```
 
 Do not create an MSI, `setup.exe`, or installer wrapper.

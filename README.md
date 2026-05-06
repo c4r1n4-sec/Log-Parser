@@ -126,15 +126,30 @@ python -m app.main
 
 ## PyInstaller one-folder build
 
-From a Windows development machine:
+From a Windows development machine, build the portable drag/drop EXE and ZIP with:
 
 ```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-python -m pip install pyinstaller
-pyinstaller --clean --noconfirm packaging\pyinstaller\app.spec
+.\build-portable.ps1
+```
+
+Or call the PowerShell build through Command Prompt:
+
+```bat
+build-portable.bat
+```
+
+The build script creates/uses `.venv`, installs requirements and PyInstaller,
+runs tests, invokes `packaging\pyinstaller\drop_target.spec`, verifies the EXE,
+copies the drop-mode BAT/README into `dist\TDSYNNEX-CB-LogParser\`, and creates:
+
+```text
+dist\TDSYNNEX-CB-LogParser-portable.zip
+```
+
+Manual PyInstaller command if the environment is already prepared:
+
+```powershell
+pyinstaller --clean --noconfirm packaging\pyinstaller\drop_target.spec
 ```
 
 The portable folder is created at:
@@ -148,20 +163,21 @@ Expected portable layout:
 ```text
 TDSYNNEX-CB-LogParser/
   TDSYNNEX-CB-LogParser.exe
+  DROP-CUSTOMER-LOGS-HERE.bat
+  README-DROP-MODE.txt
   rules/
   templates/
   config/
   tools/
-  output/
-  README.txt
 ```
 
 ## Portable ZIP creation
 
-From the `dist` directory:
+The build script creates `dist\TDSYNNEX-CB-LogParser-portable.zip` automatically.
+If you need to recreate it manually from the `dist` directory:
 
 ```powershell
-Compress-Archive -Path .\TDSYNNEX-CB-LogParser -DestinationPath .\TDSYNNEX-CB-LogParser.zip -Force
+Compress-Archive -Path .\TDSYNNEX-CB-LogParser -DestinationPath .\TDSYNNEX-CB-LogParser-portable.zip -Force
 ```
 
 Do not create an installer, MSI, or `setup.exe`.

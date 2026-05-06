@@ -1,11 +1,10 @@
-# PyInstaller one-folder spec for the portable Windows package.
+# PyInstaller one-folder spec for the portable drag/drop EXE.
 # Build command (from repository root, after dependencies are installed):
 #   pyinstaller --clean --noconfirm packaging/pyinstaller/drop_target.spec
 #
-# This spec creates a portable folder, not an installer/MSI/setup.exe.
-# Code signing, if required by release policy, should happen after the EXE is
-# produced and before the portable folder is zipped. Signing credentials are not
-# stored or expected in this repository.
+# This spec creates a portable folder only. It does not create an installer,
+# MSI, setup.exe, service, scheduled task, telemetry, auto-update, or cloud-call
+# logic.
 
 from pathlib import Path
 
@@ -22,8 +21,6 @@ a = Analysis(
         (str(project_root / "rules"), "rules"),
         (str(project_root / "templates"), "templates"),
         (str(project_root / "tools"), "tools"),
-        (str(project_root / "output" / "README.txt"), "output"),
-        (str(project_root / "packaging" / "portable" / "README.txt"), "."),
         (str(project_root / "DROP-CUSTOMER-LOGS-HERE.bat"), "."),
         (str(project_root / "README-DROP-MODE.txt"), "."),
     ],
