@@ -1,0 +1,33 @@
+{
+  "application": {
+    "name": "TDSYNNEX Carbon Black Log Parser",
+    "mode": "portable",
+    "local_only": true
+  },
+  "paths": {
+    "default_output_folder": "output",
+    "rules_folder": "rules",
+    "templates_folder": "templates"
+  },
+  "runtime_guards": {
+    "network_calls_allowed": false,
+    "telemetry_allowed": false,
+    "auto_update_allowed": false,
+    "requires_admin": false,
+    "writes_registry": false,
+    "installs_services": false,
+    "installs_scheduled_tasks": false
+  },
+  "reports": {
+    "formats": [
+      "csv",
+      "html",
+      "txt"
+    ]
+  },
+  "extraction": {
+    "max_archive_depth": 5,
+    "max_total_extracted_bytes": 1073741824,
+    "max_single_file_bytes": 268435456
+  }
+}

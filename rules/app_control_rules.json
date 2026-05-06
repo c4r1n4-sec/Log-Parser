@@ -1,0 +1,414 @@
+{
+  "schema_version": 1,
+  "description": "Deterministic Carbon Black App Control rule pack. KB entries are candidates only and are not confirmed root causes.",
+  "rules": [
+    {
+      "rule_id": "APPC_DISC_AGENT_41002",
+      "product": "Carbon Black App Control",
+      "severity": "Medium",
+      "issue_category": "Agent connectivity",
+      "component": "Agent communication",
+      "kb_candidates": [
+        "286607",
+        "286690",
+        "290083"
+      ],
+      "false_positive_cautions": "This is a deterministic pattern hit. Treat associated KBs as KB candidates only; confirm with surrounding logs, timestamps, configuration, and environment state.",
+      "required_evidence": [
+        "Agent trace communication state",
+        "Server/port context",
+        "Timestamped connection failure"
+      ],
+      "missing_evidence": "Need agent/server reachability and port 41002 validation before treating as root cause.",
+      "patterns": [
+        "Connection:\\s+(Connected|Disconnected)\\(Waiting\\)",
+        "Session:\\s+Inactive",
+        "Current server:.*41002",
+        "Server Communication",
+        "WaitForResponse",
+        "WinHTTP communication error:\\s*12175"
+      ]
+    },
+    {
+      "rule_id": "APPC_AD_SLOW_LOOKUP",
+      "product": "Carbon Black App Control",
+      "severity": "Medium",
+      "issue_category": "Directory integration latency",
+      "component": "Active Directory integration",
+      "kb_candidates": [
+        "286600"
+      ],
+      "false_positive_cautions": "This is a deterministic pattern hit. Treat associated KBs as KB candidates only; confirm with surrounding logs, timestamps, configuration, and environment state.",
+      "required_evidence": [
+        "AD lookup timing",
+        "Host group mapping evidence"
+      ],
+      "missing_evidence": "Need AD/DC health, query volume, and timing correlation.",
+      "patterns": [
+        "AD lookups are slow",
+        "HostStorage::MapUsersToHostgroupUsingScript",
+        "AD query:\\s*\\d+\\s*ms",
+        "Connected\\(Waiting\\)"
+      ]
+    },
+    {
+      "rule_id": "APPC_CERT_CN_MISMATCH",
+      "product": "Carbon Black App Control",
+      "severity": "High",
+      "issue_category": "Certificate validation",
+      "component": "Agent TLS",
+      "kb_candidates": [
+        "290752"
+      ],
+      "false_positive_cautions": "This is a deterministic pattern hit. Treat associated KBs as KB candidates only; confirm with surrounding logs, timestamps, configuration, and environment state.",
+      "required_evidence": [
+        "TLS certificate CN validation error",
+        "Agent trace around server connection"
+      ],
+      "missing_evidence": "Need certificate chain/CN/SAN details and server identity confirmation.",
+      "patterns": [
+        "GetSslError\\[16\\]",
+        "CERT_CN_INVALID",
+        "WINHTTP_CALLBACK_STATUS_FLAG_CERT_CN_INVALID"
+      ]
+    },
+    {
+      "rule_id": "APPC_443_TLS_COMMKEY_RDL",
+      "product": "Carbon Black App Control",
+      "severity": "High",
+      "issue_category": "Certificate validation",
+      "component": "Resource download / TLS",
+      "kb_candidates": [
+        "286506",
+        "286607"
+      ],
+      "false_positive_cautions": "This is a deterministic pattern hit. Treat associated KBs as KB candidates only; confirm with surrounding logs, timestamps, configuration, and environment state.",
+      "required_evidence": [
+        "TLS/key pinning or resource download certificate evidence"
+      ],
+      "missing_evidence": "Need RDL configuration, certificate trust, and communication-key validation.",
+      "patterns": [
+        "METHOD_SECURE_MESSAGE",
+        "SSL Key Pinning:\\s+On\\s+\\(Mismatch\\)",
+        "Untrusted server certificate",
+        "TrustedCertList\\.pem",
+        "hostpkg/pkg\\.php",
+        "Resource Download Location"
+      ]
+    },
+    {
+      "rule_id": "APPC_CDC_CONNECTIVITY_ALERT",
+      "product": "Carbon Black App Control",
+      "severity": "Medium",
+      "issue_category": "CDC connectivity",
+      "component": "File reputation / CDC",
+      "kb_candidates": [
+        "286461",
+        "286448"
+      ],
+      "false_positive_cautions": "This is a deterministic pattern hit. Treat associated KBs as KB candidates only; confirm with surrounding logs, timestamps, configuration, and environment state.",
+      "required_evidence": [
+        "Reporter/CDC connectivity alert",
+        "CDC endpoint or sync context"
+      ],
+      "missing_evidence": "Need network/proxy reachability and reporter schedule evidence.",
+      "patterns": [
+        "Carbon Black File Reputation",
+        "ReporterConnectivityError",
+        "services\\.bit9\\.com",
+        "ParityReporter\\.exe check",
+        "fast sync with CDC",
+        "slow sync with CDC",
+        "connection is lost for longer than specified period"
+      ]
+    },
+    {
+      "rule_id": "APPC_CDC_WSE2127_TIME",
+      "product": "Carbon Black App Control",
+      "severity": "Medium",
+      "issue_category": "CDC connectivity",
+      "component": "File reputation / CDC",
+      "kb_candidates": [
+        "287525"
+      ],
+      "false_positive_cautions": "This is a deterministic pattern hit. Treat associated KBs as KB candidates only; confirm with surrounding logs, timestamps, configuration, and environment state.",
+      "required_evidence": [
+        "WSE2127 timeout evidence in reporter logs"
+      ],
+      "missing_evidence": "Need duration, endpoint, and whether the timeout is transient or recurring.",
+      "patterns": [
+        "WSE2127",
+        "Operation timed out"
+      ]
+    },
+    {
+      "rule_id": "APPC_CDC_SECURITYTOKEN",
+      "product": "Carbon Black App Control",
+      "severity": "Medium",
+      "issue_category": "CDC authentication",
+      "component": "File reputation / CDC",
+      "kb_candidates": [
+        "429723",
+        "417114"
+      ],
+      "false_positive_cautions": "This is a deterministic pattern hit. Treat associated KBs as KB candidates only; confirm with surrounding logs, timestamps, configuration, and environment state.",
+      "required_evidence": [
+        "Security token error",
+        "Reporter reset/sync context"
+      ],
+      "missing_evidence": "Need server time, token reset history, and post-upgrade state.",
+      "patterns": [
+        "WSE511",
+        "invalid to use the security token",
+        "expired or postdated",
+        "Reset attempt .* Carbon Black File Reputation"
+      ]
+    },
+    {
+      "rule_id": "APPC_CDC_LAST_EXEC_TIME",
+      "product": "Carbon Black App Control",
+      "severity": "Low",
+      "issue_category": "CDC scheduling",
+      "component": "File reputation / CDC",
+      "kb_candidates": [
+        "286461"
+      ],
+      "false_positive_cautions": "This is a deterministic pattern hit. Treat associated KBs as KB candidates only; confirm with surrounding logs, timestamps, configuration, and environment state.",
+      "required_evidence": [
+        "Scheduled task last execution evidence"
+      ],
+      "missing_evidence": "Need schedule configuration and surrounding CDC sync errors.",
+      "patterns": [
+        "ReportScheduledTaskExecution",
+        "@last_exec_time",
+        "last_exec_time"
+      ]
+    },
+    {
+      "rule_id": "APPC_SQL_TIMEOUT",
+      "product": "Carbon Black App Control",
+      "severity": "High",
+      "issue_category": "Database timeout",
+      "component": "SQL Server",
+      "kb_candidates": [
+        "291435"
+      ],
+      "false_positive_cautions": "This is a deterministic pattern hit. Treat associated KBs as KB candidates only; confirm with surrounding logs, timestamps, configuration, and environment state.",
+      "required_evidence": [
+        "SQL timeout or pool exhaustion evidence",
+        "Affected query/component context"
+      ],
+      "missing_evidence": "Need SQL Server health, wait stats, query duration, and recurrence evidence.",
+      "patterns": [
+        "Execution Timeout Expired",
+        "DB Error: Query timeout expired",
+        "Timeout expired",
+        "max pool size was reached",
+        "AntibodiesGUI",
+        "GetAntibodiesWithMissingMetadata",
+        "AntibodyMetadataLookup"
+      ]
+    },
+    {
+      "rule_id": "APPC_SQL_ROLE_DSN_APPCWEBSERVER",
+      "product": "Carbon Black App Control",
+      "severity": "High",
+      "issue_category": "Database permissions/configuration",
+      "component": "SQL Server / AppCWebServer",
+      "kb_candidates": [
+        "436182"
+      ],
+      "false_positive_cautions": "This is a deterministic pattern hit. Treat associated KBs as KB candidates only; confirm with surrounding logs, timestamps, configuration, and environment state.",
+      "required_evidence": [
+        "AppCWebServer role or DSN error",
+        "IIS app pool principal context"
+      ],
+      "missing_evidence": "Need SQL login/role state and DSN configuration confirmation.",
+      "patterns": [
+        "Invalid file dsn",
+        "Cannot find the server principal",
+        "add_server_role",
+        "AppCWebServer",
+        "IIS APPPOOL\\\\AppCDownloads",
+        "IIS APPPOOL\\\\DefaultAppPool"
+      ]
+    },
+    {
+      "rule_id": "APPC_BACKLOG_INGESTION",
+      "product": "Carbon Black App Control",
+      "severity": "Medium",
+      "issue_category": "Event ingestion backlog",
+      "component": "Server ingestion",
+      "kb_candidates": [
+        "286600"
+      ],
+      "false_positive_cautions": "This is a deterministic pattern hit. Treat associated KBs as KB candidates only; confirm with surrounding logs, timestamps, configuration, and environment state.",
+      "required_evidence": [
+        "Ingestion or database backlog marker"
+      ],
+      "missing_evidence": "Need queue depth, database table state, and server performance context.",
+      "patterns": [
+        "InsertAllEventColumns",
+        "Arithmetic overflow error converting IDENTITY to data type int",
+        "metered_execs",
+        "MaxFileOpBufferMessages",
+        "temp_antibody_instances"
+      ]
+    },
+    {
+      "rule_id": "APPC_CONSOLE_FASTCGI_APPPOOL",
+      "product": "Carbon Black App Control",
+      "severity": "High",
+      "issue_category": "Console/IIS availability",
+      "component": "Console / IIS / FastCGI",
+      "kb_candidates": [
+        "417596"
+      ],
+      "false_positive_cautions": "This is a deterministic pattern hit. Treat associated KBs as KB candidates only; confirm with surrounding logs, timestamps, configuration, and environment state.",
+      "required_evidence": [
+        "HTTP/FastCGI/AppPool error",
+        "Console access context"
+      ],
+      "missing_evidence": "Need IIS event logs, app pool state, and PHP/FastCGI details.",
+      "patterns": [
+        "HTTP Error 500",
+        "Internal Server Error",
+        "FastCGI process has failed frequently",
+        "HTTP Error 503",
+        "The service is unavailable",
+        "403 - Forbidden",
+        "configlistwithdeleteditems\\.xml\\.egk"
+      ]
+    },
+    {
+      "rule_id": "APPC_POLICY_UNEXPECTED_BLOCK",
+      "product": "Carbon Black App Control",
+      "severity": "Medium",
+      "issue_category": "Unexpected block",
+      "component": "Policy enforcement",
+      "kb_candidates": [
+        "286112"
+      ],
+      "false_positive_cautions": "This is a deterministic pattern hit. Treat associated KBs as KB candidates only; confirm with surrounding logs, timestamps, configuration, and environment state.",
+      "required_evidence": [
+        "Block decision or validation evidence",
+        "Policy/rule context"
+      ],
+      "missing_evidence": "Need policy, file state, publisher/hash, and approval workflow context.",
+      "patterns": [
+        "was blocked because it was unapproved",
+        "EligibleForApproval",
+        "InEligibleForApproval",
+        "ValidationError\\[",
+        "Block Banned File Hashes",
+        "Block Files with Banned Publishers or Certificates"
+      ]
+    },
+    {
+      "rule_id": "APPC_TAMPER",
+      "product": "Carbon Black App Control",
+      "severity": "Medium",
+      "issue_category": "Tamper protection",
+      "component": "Agent enforcement",
+      "kb_candidates": [
+        "288536"
+      ],
+      "false_positive_cautions": "This is a deterministic pattern hit. Treat associated KBs as KB candidates only; confirm with surrounding logs, timestamps, configuration, and environment state.",
+      "required_evidence": [
+        "Tamper protection event",
+        "Process/file context"
+      ],
+      "missing_evidence": "Need initiating process/user and whether activity was expected administration.",
+      "patterns": [
+        "Agent tampering prevented",
+        "blocked because of Tamper Protection",
+        "Tamper Protection"
+      ]
+    },
+    {
+      "rule_id": "APPC_ACCESS_DENIED",
+      "product": "Carbon Black App Control",
+      "severity": "Medium",
+      "issue_category": "Access denied",
+      "component": "Authentication / permissions",
+      "kb_candidates": [],
+      "false_positive_cautions": "This is a deterministic pattern hit. Treat associated KBs as KB candidates only; confirm with surrounding logs, timestamps, configuration, and environment state.",
+      "required_evidence": [
+        "Access denied or logon rights evidence"
+      ],
+      "missing_evidence": "Need account, privilege, service, and domain/local policy context.",
+      "patterns": [
+        "Access Denied",
+        "Invalid Username or Password",
+        "Password Access Locked",
+        "Log on as Service",
+        "Log on as Batch Job"
+      ]
+    },
+    {
+      "rule_id": "APPC_KERNEL_ASSERTION",
+      "product": "Carbon Black App Control",
+      "severity": "Low",
+      "issue_category": "Kernel assertion",
+      "component": "Agent kernel driver",
+      "kb_candidates": [
+        "288544"
+      ],
+      "false_positive_cautions": "This is a deterministic pattern hit. Treat associated KBs as KB candidates only; confirm with surrounding logs, timestamps, configuration, and environment state.",
+      "required_evidence": [
+        "Kernel assertion marker or FailureId"
+      ],
+      "missing_evidence": "Need frequency, agent version, OS build, and whether symptoms are user-impacting.",
+      "patterns": [
+        "kernel assertions",
+        "FailureId\\[778\\]"
+      ]
+    },
+    {
+      "rule_id": "APPC_UPGRADE_SERVER",
+      "product": "Carbon Black App Control",
+      "severity": "Medium",
+      "issue_category": "Server upgrade/install",
+      "component": "Server installer / Reporter",
+      "kb_candidates": [
+        "291656",
+        "417596"
+      ],
+      "false_positive_cautions": "This is a deterministic pattern hit. Treat associated KBs as KB candidates only; confirm with surrounding logs, timestamps, configuration, and environment state.",
+      "required_evidence": [
+        "Server upgrade/install failure marker"
+      ],
+      "missing_evidence": "Need installer logs, prerequisite state, and service registration details.",
+      "patterns": [
+        "\\.Net 4\\.8 is missing",
+        ".NET Framework 4.8",
+        "Computers\\.php does not exist",
+        "ParityReporter\\.exe start",
+        "Could not register Carbon Black App Control service",
+        "ServerInstall"
+      ]
+    },
+    {
+      "rule_id": "APPC_UPGRADE_AGENT_CERT",
+      "product": "Carbon Black App Control",
+      "severity": "Medium",
+      "issue_category": "Agent upgrade",
+      "component": "Agent installer / certificate validation",
+      "kb_candidates": [
+        "290653",
+        "290752"
+      ],
+      "false_positive_cautions": "This is a deterministic pattern hit. Treat associated KBs as KB candidates only; confirm with surrounding logs, timestamps, configuration, and environment state.",
+      "required_evidence": [
+        "Agent upgrade download/install or certificate validation evidence"
+      ],
+      "missing_evidence": "Need package download state, certificate chain, and agent/server version context.",
+      "patterns": [
+        "Upgrade did not start after download",
+        "ParityHostAgent\\.msi",
+        "CERT_TRUST_IS_PARTIAL_CHAIN",
+        "ValidationError\\["
+      ]
+    }
+  ]
+}
