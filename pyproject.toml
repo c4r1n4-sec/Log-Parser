@@ -11,6 +11,7 @@ dependencies = [
 
 [project.scripts]
 tdsynnex-carbon-black-log-parser = "app.main:main"
+tdsynnex-carbon-black-log-parser-drop = "app.drop_target:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

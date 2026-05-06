@@ -23,6 +23,7 @@ TDSYNNEX-CB-LogParser/
     README.txt
   output/
     README.txt
+  DROP-CUSTOMER-LOGS-HERE.bat
   README.txt
 ```
 
@@ -33,15 +34,30 @@ same one-folder build. Do not remove those files from the portable folder.
 
 1. Extract the portable ZIP to a writable local folder, for example:
    `C:\Tools\TDSYNNEX-CB-LogParser` or a case-specific working folder.
-2. Run `TDSYNNEX-CB-LogParser.exe` directly.
-3. Use **Add Files**, **Add Folder**, or drag/drop to add log files, folders, or
-   ZIP bundles.
-4. Use **Select Output Folder** to choose where reports should be written.
-5. Click **Start Scan**.
-6. Use **Open Output Folder** to open the latest output workspace.
+2. Drag customer logs, ZIPs, PDFs, or folders onto `TDSYNNEX-CB-LogParser.exe`.
+3. Or drag artifacts onto `DROP-CUSTOMER-LOGS-HERE.bat` to keep the console open
+   after the scan completes.
+4. Review the generated report folder printed in the console output.
 
 No installation is required. Administrator rights are not required. Python is not
 required on the target engineer machine after packaging.
+
+The same mode can be run explicitly:
+
+```powershell
+TDSYNNEX-CB-LogParser.exe "C:\Cases\customerlogs.zip" "C:\Cases\Broadcom StandardReport.pdf"
+```
+
+From source, the equivalent command is:
+
+```powershell
+python -m app.drop_target "C:\Cases\customerlogs.zip" "C:\Cases\Broadcom StandardReport.pdf"
+```
+
+Use `--output "C:\Path\Output"` to choose a report folder, `--open-output` to
+open the folder after completion, and `--pause` to wait for Enter before the
+console closes. This command-line mode reuses the shared App Control scan/report
+pipeline and does not add Carbon Black Cloud or EDR logic.
 
 ## Local-only behavior
 
@@ -56,10 +72,11 @@ The app is designed for offline local triage:
 
 ## Output reports
 
-Each scan creates a timestamped workspace under the selected output folder:
+Drag/drop scans write reports to the selected `--output` folder or, by default,
+to a timestamped Documents folder:
 
 ```text
-output/scans/YYYYMMDD-HHMMSS/
+%USERPROFILE%\Documents\TDSYNNEX-CB-LogParser\scan-YYYYMMDD-HHMMSS\
   artifact_coverage.csv
   all_hits.csv
   findings_by_rule.csv

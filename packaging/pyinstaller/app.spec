@@ -14,7 +14,7 @@ project_root = Path.cwd()
 
 
 a = Analysis(
-    [str(project_root / "app" / "main.py")],
+    [str(project_root / "app" / "drop_target.py")],
     pathex=[str(project_root)],
     binaries=[],
     datas=[
@@ -24,6 +24,7 @@ a = Analysis(
         (str(project_root / "tools" / "README.txt"), "tools"),
         (str(project_root / "output" / "README.txt"), "output"),
         (str(project_root / "packaging" / "portable" / "README.txt"), "."),
+        (str(project_root / "packaging" / "portable" / "DROP-CUSTOMER-LOGS-HERE.bat"), "."),
     ],
     hiddenimports=[],
     hookspath=[],
@@ -46,7 +47,7 @@ exe = EXE(
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=False,
+    console=True,
     version=str(project_root / "packaging" / "pyinstaller" / "version_info.txt"),
 )
 coll = COLLECT(

@@ -46,6 +46,28 @@ to run from an extracted folder without installation.
 6. Open the selected output folder and review the latest `scans/YYYYMMDD-HHMMSS`
    workspace.
 
+
+## Drag-and-drop command-line mode
+
+Engineers can scan customer artifacts without opening the GUI by dragging files,
+folders, ZIPs, PDFs, and other logs onto the packaged EXE or onto
+`DROP-CUSTOMER-LOGS-HERE.bat` in the portable folder. From source, run:
+
+```powershell
+python -m app.drop_target "C:\Cases\customerlogs.zip" "C:\Cases\Broadcom StandardReport.pdf"
+```
+
+By default, reports are written to:
+
+```text
+%USERPROFILE%\Documents\TDSYNNEX-CB-LogParser\scan-YYYYMMDD-HHMMSS\
+```
+
+Use `--output "C:\Path\Output"` to choose a report folder, `--open-output` to
+open the folder after completion, and `--pause` when launching from a batch file.
+This mode uses the same App Control ingestion, scanner, rules, and report
+pipeline as the packaged drag/drop entry point.
+
 ## Output location
 
 Reports are written under the selected output folder. If no custom folder is
