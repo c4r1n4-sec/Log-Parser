@@ -74,10 +74,10 @@ The app is designed for offline local triage:
 ## Output reports
 
 Drag/drop scans write reports to the selected `--output` folder or, by default,
-to a timestamped Documents folder:
+to a Desktop case-number folder:
 
 ```text
-%USERPROFILE%\Documents\TDSYNNEX-CB-LogParser\scan-YYYYMMDD-HHMMSS\
+%USERPROFILE%\Desktop\TDSYNNEX-CB-LogParser\Case-60114450-scan-YYYYMMDD-HHMMSS\
   artifact_coverage.csv
   all_hits.csv
   findings_by_rule.csv
@@ -89,6 +89,12 @@ to a timestamped Documents folder:
   decoded/
   extracted/
 ```
+
+If no 8-digit Broadcom case number starting with 6 is detected, the default
+folder uses `Case-UNKNOWN-scan-YYYYMMDD-HHMMSS`. Case numbers are detected from
+dropped folder names, file names such as `Broadcom StandardReport_60114450.pdf`,
+and StandardReport PDF text when PDF text extraction is available. Providing
+`--output` uses that folder instead of the Desktop default.
 
 ## Optional decoder helpers
 
