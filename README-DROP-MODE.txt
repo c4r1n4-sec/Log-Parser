@@ -6,8 +6,21 @@ Quick use
 1. Unzip the portable package to a writable local folder.
 2. Drag customer files or folders onto DROP-CUSTOMER-LOGS-HERE.bat.
    Supported inputs include customer ZIPs, PDFs, logs, folders, and screenshots.
-3. The tool creates output under Documents\TDSYNNEX-CB-LogParser by default.
+3. By default, reports are written to your Desktop under a case-number folder:
+   %USERPROFILE%\Desktop\TDSYNNEX-CB-LogParser\Case-60114450-scan-YYYYMMDD-HHMMSS
+   If no Broadcom case number is detected, the folder uses Case-UNKNOWN.
 4. When the scan finishes, open triage_report.html in the output folder.
+
+Case-number output folders
+--------------------------
+Drag/drop mode detects 8-digit Broadcom case numbers that start with 6 from
+input folder names, file names, and StandardReport PDF text when PDF text
+extraction is available. Examples include folders named 60114450 and files such
+as Broadcom StandardReport_60114450.pdf, StandardReport-60114450.pdf, and
+Case_60114450.zip.
+
+Use --output only when you want to choose a specific report folder. When
+--output is provided, the Desktop case-number default is not used.
 
 Local-only notes
 ----------------
@@ -27,11 +40,7 @@ Manual BAT test steps
 2. Double-click the BAT with no dropped files. Confirm it prints:
    "Drag and drop customer logs, ZIPs, PDFs, folders, or screenshots onto this BAT file."
    Then confirm it pauses and exits after a keypress.
-3. Drag a folder whose path contains spaces onto the BAT. Confirm the console
-   shows the TDSYNNEX banner, the EXE starts with --open-output --pause, and the
-   scan receives the path correctly.
-4. Drag multiple files/folders onto the BAT. Confirm all dropped paths are passed
-   through and triage_report.html is created in Documents\TDSYNNEX-CB-LogParser.
-5. Temporarily move or rename the EXE and run the BAT. Confirm it prints:
-   "TDSYNNEX-CB-LogParser.exe was not found. This BAT must be in the same folder as the portable EXE."
-   Then confirm it pauses and exits with code 1.
+3. Drag a folder whose path contains spaces onto the BAT. Confirm it scans and
+   writes reports under Desktop\TDSYNNEX-CB-LogParser\Case-<CASE_NUMBER>-scan-YYYYMMDD-HHMMSS.
+4. Drag multiple files/folders onto the BAT. Confirm the console reports the
+   number of inputs received and the final triage_report.html path.

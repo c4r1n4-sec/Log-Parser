@@ -53,3 +53,19 @@ def test_build_portable_bat_invokes_powershell_script() -> None:
     assert "powershell.exe" in script_text
     assert "build-portable.ps1" in script_text
     assert "%*" in script_text
+
+
+def test_portable_docs_describe_desktop_case_number_default_output() -> None:
+    doc_paths = [
+        REPO_ROOT / "docs" / "portable_usage.md",
+        REPO_ROOT / "packaging" / "portable" / "README.txt",
+    ]
+
+    for doc_path in doc_paths:
+        doc_text = doc_path.read_text(encoding="utf-8")
+        assert "Desktop" in doc_text
+        assert "TDSYNNEX-CB-LogParser" in doc_text
+        assert "Case-60114450-scan-YYYYMMDD-HHMMSS" in doc_text
+        assert "Documents\\TDSYNNEX-CB-LogParser" not in doc_text
+        assert "bundled output folder" not in doc_text
+        assert "portable folder output as default" not in doc_text
