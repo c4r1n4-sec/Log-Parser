@@ -37,3 +37,22 @@ jobs:
           name: TDSYNNEX-CB-LogParser-portable
           path: dist/TDSYNNEX-CB-LogParser-portable.zip
           if-no-files-found: error
+
+      - name: Prepare script portable artifact
+        shell: powershell
+        run: |
+          $artifactRoot = "dist/TDSYNNEX-CB-LogParser-script-portable"
+          New-Item -ItemType Directory -Force -Path $artifactRoot | Out-Null
+          Copy-Item RUN-CB-LOG-PARSER.bat, requirements-cli.txt, README-DROP-MODE.txt -Destination $artifactRoot
+          Copy-Item app, rules, templates, tools -Destination $artifactRoot -Recurse
+          New-Item -ItemType Directory -Force -Path "$artifactRoot/config" | Out-Null
+          Copy-Item app/config/* -Destination "$artifactRoot/config" -Recurse
+          New-Item -ItemType Directory -Force -Path "$artifactRoot/docs" | Out-Null
+          Copy-Item docs/aws_windows_vm_usage.md -Destination "$artifactRoot/docs"
+
+      - name: Upload script portable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TDSYNNEX-CB-LogParser-script-portable
+          path: dist/TDSYNNEX-CB-LogParser-script-portable
+          if-no-files-found: error

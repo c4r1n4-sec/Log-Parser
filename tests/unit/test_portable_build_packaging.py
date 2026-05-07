@@ -69,3 +69,19 @@ def test_portable_docs_describe_desktop_case_number_default_output() -> None:
         assert "Documents\\TDSYNNEX-CB-LogParser" not in doc_text
         assert "bundled output folder" not in doc_text
         assert "portable folder output as default" not in doc_text
+
+
+def test_workflow_uploads_script_portable_artifact_with_required_files() -> None:
+    workflow_path = REPO_ROOT / ".github" / "workflows" / "build-windows-portable.yml"
+    workflow_text = workflow_path.read_text(encoding="utf-8")
+
+    assert workflow_path.exists()
+    assert "TDSYNNEX-CB-LogParser-script-portable" in workflow_text
+    assert "RUN-CB-LOG-PARSER.bat" in workflow_text
+    assert "requirements-cli.txt" in workflow_text
+    assert "README-DROP-MODE.txt" in workflow_text
+    assert "Copy-Item app, rules, templates, tools" in workflow_text
+    assert '"$artifactRoot/config"' in workflow_text
+    assert "Copy-Item app/config/*" in workflow_text
+    assert "docs/aws_windows_vm_usage.md" in workflow_text
+    assert "actions/upload-artifact@v4" in workflow_text
