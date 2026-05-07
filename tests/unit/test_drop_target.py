@@ -75,18 +75,84 @@ def test_multiple_input_paths_scan_all_inputs(tmp_path: Path, capsys) -> None:
     _assert_required_reports(output_dir)
 
 
-def test_custom_output_folder_is_used(tmp_path: Path) -> None:
+def test_default_output_folder_uses_desktop_case_folder(
+    tmp_path: Path, monkeypatch, capsys
+) -> None:
+    user_profile = tmp_path / "User Profile"
+    user_profile.mkdir()
+    monkeypatch.setenv("USERPROFILE", str(user_profile))
+    input_dir = tmp_path / "60114450"
+    input_dir.mkdir()
+    (input_dir / "trace.bt9").write_text(
+        "Connected(Waiting) GetSslError\n", encoding="utf-8"
+    )
+
+    exit_code = drop_target.main([str(input_dir)])
+
+    captured = capsys.readouterr()
+    expected_base = user_profile / "Desktop" / "TDSYNNEX-CB-LogParser"
+    case_dirs = list(expected_base.glob("Case-60114450-scan-*"))
+    assert exit_code == 0
+    assert len(case_dirs) == 1
+    assert (case_dirs[0] / "triage_report.html").exists()
+    assert "Detected case number: 60114450" in captured.out
+    assert f"Output folder: {case_dirs[0].resolve()}" in captured.out
+    assert "Scan completed" in captured.out
+    assert "Warnings: 0" in captured.out
+
+
+def test_folder_named_case_number_is_detected(tmp_path: Path) -> None:
+    input_dir = tmp_path / "60114450"
+    input_dir.mkdir()
+
+    result = drop_target.detect_case_number([str(input_dir)])
+
+    assert result.case_number == "60114450"
+    assert result.warnings == []
+
+
+def test_standardreport_pdf_filename_detects_case_number(tmp_path: Path) -> None:
+    pdf_path = tmp_path / "Broadcom StandardReport_60114450.pdf"
+    pdf_path.write_bytes(b"not a real pdf")
+
+    result = drop_target.detect_case_number([str(pdf_path)])
+
+    assert result.case_number == "60114450"
+    assert result.warnings == []
+
+
+def test_ambiguous_case_numbers_create_warning(tmp_path: Path) -> None:
+    first = tmp_path / "Case_60114450.zip"
+    second = tmp_path / "StandardReport-60114451.pdf"
+    first.write_text("one", encoding="utf-8")
+    second.write_text("two", encoding="utf-8")
+
+    result = drop_target.detect_case_number([str(first), str(second)])
+
+    assert result.case_number == "60114450"
+    assert result.warnings == [
+        "Multiple possible case numbers found; selected 60114450."
+    ]
+
+
+def test_custom_output_folder_is_used(tmp_path: Path, monkeypatch, capsys) -> None:
     input_dir = tmp_path / "case"
     input_dir.mkdir()
     (input_dir / "customer.log").write_text("publisher validation failed\n", encoding="utf-8")
     custom_output = tmp_path / "custom" / "drop-results"
+    user_profile = tmp_path / "User Profile"
+    user_profile.mkdir()
+    monkeypatch.setenv("USERPROFILE", str(user_profile))
 
     exit_code = drop_target.main([str(input_dir), "--output", str(custom_output)])
 
+    captured = capsys.readouterr()
     assert exit_code == 0
     assert (custom_output / "triage_report.html").exists()
     assert (custom_output / "triage_report.txt").exists()
     assert not (custom_output / "scans").exists()
+    assert not (user_profile / "Desktop" / "TDSYNNEX-CB-LogParser").exists()
+    assert f"Output folder: {custom_output.resolve()}" in captured.out
 
 
 def test_run_scan_result_fields(tmp_path: Path) -> None:
