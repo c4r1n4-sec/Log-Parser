@@ -69,3 +69,29 @@ def test_portable_docs_describe_desktop_case_number_default_output() -> None:
         assert "Documents\\TDSYNNEX-CB-LogParser" not in doc_text
         assert "bundled output folder" not in doc_text
         assert "portable folder output as default" not in doc_text
+
+
+def test_workflow_uploads_script_portable_runner_artifact() -> None:
+    workflow_path = REPO_ROOT / ".github" / "workflows" / "build-windows-portable.yml"
+    workflow_text = workflow_path.read_text(encoding="utf-8")
+
+    assert workflow_path.exists()
+    assert "Stage script portable runner" in workflow_text
+    assert "RUN-CB-LOG-PARSER.bat" in workflow_text
+    assert "requirements-cli.txt" in workflow_text
+    assert "TDSYNNEX-CB-LogParser-script-portable" in workflow_text
+
+
+def test_aws_windows_vm_usage_documents_script_portable_runner() -> None:
+    doc_path = REPO_ROOT / "docs" / "aws_windows_vm_usage.md"
+    doc_text = doc_path.read_text(encoding="utf-8")
+
+    assert doc_path.exists()
+    assert "AWS Windows VM script-portable usage" in doc_text
+    assert "py -3.11" in doc_text
+    assert "py -3" in doc_text
+    assert "python" in doc_text
+    assert "RUN-CB-LOG-PARSER.bat" in doc_text
+    assert ".venv\\Scripts\\python.exe -m app.drop_target --open-output --pause %*" in doc_text
+    assert "TDSYNNEX-CB-LogParser-script-portable" in doc_text
+    assert "PySide6" in doc_text
