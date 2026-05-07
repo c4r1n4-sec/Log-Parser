@@ -42,15 +42,9 @@ try {
         & $Python -m pip install -r (Join-Path $RepoRoot "requirements.txt")
     } "Installing package requirements"
 
-    & $Python -c "import PyInstaller" 2>$null
-    if ($LASTEXITCODE -ne 0) {
-        Invoke-Checked { & $Python -m pip install pyinstaller } "Installing PyInstaller"
-    }
-
-    & $Python -c "import pytest" 2>$null
-    if ($LASTEXITCODE -ne 0) {
-        Invoke-Checked { & $Python -m pip install pytest } "Installing pytest for build validation"
-    }
+    Invoke-Checked {
+        & $Python -m pip install pyinstaller pytest
+    } "Installing build/test dependencies"
 
     if (-not $SkipTests) {
         Invoke-Checked { & $Python -m pytest -q } "Running tests"
