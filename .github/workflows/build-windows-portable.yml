@@ -37,3 +37,19 @@ jobs:
           name: TDSYNNEX-CB-LogParser-portable
           path: dist/TDSYNNEX-CB-LogParser-portable.zip
           if-no-files-found: error
+
+      - name: Stage script portable runner
+        shell: pwsh
+        run: |
+          $scriptPortable = Join-Path $env:RUNNER_TEMP "TDSYNNEX-CB-LogParser-script-portable"
+          Remove-Item -Recurse -Force $scriptPortable -ErrorAction SilentlyContinue
+          New-Item -ItemType Directory -Force $scriptPortable | Out-Null
+          Copy-Item -Recurse -Path app, rules, templates, tools, docs -Destination $scriptPortable
+          Copy-Item -Path RUN-CB-LOG-PARSER.bat, requirements-cli.txt, README.md -Destination $scriptPortable
+
+      - name: Upload script portable runner
+        uses: actions/upload-artifact@v4
+        with:
+          name: TDSYNNEX-CB-LogParser-script-portable
+          path: ${{ runner.temp }}/TDSYNNEX-CB-LogParser-script-portable
+          if-no-files-found: error

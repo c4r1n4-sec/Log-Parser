@@ -58,3 +58,29 @@ def test_drop_mode_readme_documents_manual_bat_validation() -> None:
     assert "Manual BAT test steps" in readme_text
     assert "path contains spaces" in readme_text
     assert "multiple files/folders" in readme_text
+
+
+def test_script_portable_runner_uses_python_venv_and_cli_requirements() -> None:
+    bat_path = REPO_ROOT / "RUN-CB-LOG-PARSER.bat"
+    bat_text = bat_path.read_text(encoding="utf-8")
+
+    assert bat_path.exists()
+    assert "py -3.11 --version" in bat_text
+    assert "py -3 --version" in bat_text
+    assert "python --version" in bat_text
+    assert "%PYTHON_LAUNCHER% -m venv .venv" in bat_text
+    assert '".venv\\Scripts\\python.exe" -m pip install -r requirements-cli.txt' in bat_text
+    assert (
+        '".venv\\Scripts\\python.exe" -m app.drop_target --open-output --pause %*'
+        in bat_text
+    )
+    assert "TDSYNNEX-CB-LogParser.exe" not in bat_text
+
+
+def test_cli_requirements_exclude_gui_dependencies() -> None:
+    requirements_path = REPO_ROOT / "requirements-cli.txt"
+    requirements_text = requirements_path.read_text(encoding="utf-8")
+
+    assert requirements_path.exists()
+    assert requirements_text.strip()
+    assert "PySide6" not in requirements_text
