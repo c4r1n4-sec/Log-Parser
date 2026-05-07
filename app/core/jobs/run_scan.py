@@ -23,6 +23,7 @@ REQUIRED_REPORT_NAMES = (
     "missing_evidence_checklist.txt",
     "triage_report.html",
     "triage_report.txt",
+    "scan_summary.txt",
 )
 
 
@@ -55,6 +56,7 @@ class ScanResult:
     findings_by_rule_csv: Path = Path()
     findings_by_file_csv: Path = Path()
     missing_evidence_checklist_txt: Path = Path()
+    scan_summary_txt: Path = Path()
     rows: list[ArtifactCoverageRow] = field(default_factory=list)
     hits: list[SearchHit] = field(default_factory=list)
 
@@ -91,6 +93,8 @@ def run_scan(inputs: list[str], output_dir: str, options: ScanOptions) -> ScanRe
 
     warnings = _collect_warnings(rows)
     severity_counts = _severity_counts(hits)
+    scan_summary_txt = workspace / "scan_summary.txt"
+    _write_scan_summary(scan_summary_txt, rows, hits, warnings)
 
     if options.progress_callback is not None:
         options.progress_callback(f"Wrote artifact coverage: {coverage_csv}")
@@ -115,6 +119,7 @@ def run_scan(inputs: list[str], output_dir: str, options: ScanOptions) -> ScanRe
         findings_by_rule_csv=report_outputs.findings_by_rule_csv,
         findings_by_file_csv=report_outputs.findings_by_file_csv,
         missing_evidence_checklist_txt=report_outputs.missing_evidence_checklist_txt,
+        scan_summary_txt=scan_summary_txt,
         rows=rows,
         hits=hits,
     )
@@ -141,11 +146,29 @@ def _severity_counts(hits: Iterable[SearchHit]) -> dict[str, int]:
     return counts
 
 
+def _write_scan_summary(
+    output_path: Path, rows: list[ArtifactCoverageRow], hits: list[SearchHit], warnings: list[str]
+) -> None:
+    lines = [
+        "Scan summary",
+        "============",
+        f"Artifacts reviewed: {len(rows)}",
+        f"Findings count: {len(hits)}",
+        f"Warnings: {len(warnings)}",
+    ]
+    if warnings:
+        lines.extend(["", "Warnings", "--------"])
+        lines.extend(f"- {warning}" for warning in warnings)
+    output_path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
+
+
 def _collect_warnings(rows: Iterable[ArtifactCoverageRow]) -> list[str]:
     warnings: list[str] = []
     seen: set[str] = set()
     for row in rows:
-        if row.limitations:
+        if row.decoder_status == "password-required":
+            warning = f"Encrypted ZIP member skipped: {row.artifact_path}"
+        elif row.limitations:
             warning = f"{row.artifact_path}: {row.limitations}"
         elif row.decoder_status in {
             "archive-loop-detected",

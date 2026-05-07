@@ -121,18 +121,22 @@ class IngestPipeline:
             else self._scan_artifact(path, classification)
         )
         self.hits.extend(scan_stats.hits)
-        self.rows.append(
-            self._coverage_row(
-                path=path,
-                original_input=original_input,
-                extracted_from=extracted_from,
-                classification=classification,
-                scan_stats=scan_stats,
-            )
+        coverage_row = self._coverage_row(
+            path=path,
+            original_input=original_input,
+            extracted_from=extracted_from,
+            classification=classification,
+            scan_stats=scan_stats,
         )
+        self.rows.append(coverage_row)
 
-        if classification.is_supported_archive:
-            self._extract_archive(path, original_input, depth)
+        if classification.is_supported_archive and self._extract_archive(
+            path, original_input, depth
+        ):
+            coverage_row.decoder_status = "extracted-with-limitations"
+            coverage_row.limitations = (
+                "Archive extracted with limitations; see artifact coverage rows."
+            )
 
         if decoder_result is not None:
             for decoded_path in decoder_result.decoded_paths:
@@ -177,7 +181,7 @@ class IngestPipeline:
         self._artifact_counter += 1
         return f"{self._artifact_counter:06d}"
 
-    def _extract_archive(self, archive_path: Path, original_input: Path, depth: int) -> None:
+    def _extract_archive(self, archive_path: Path, original_input: Path, depth: int) -> bool:
         if depth >= self.limits.max_archive_depth:
             self._record_policy_row(
                 artifact_path=archive_path,
@@ -188,7 +192,7 @@ class IngestPipeline:
                 decoder_status="skipped-by-policy",
                 limitations=f"Maximum archive depth {self.limits.max_archive_depth} reached.",
             )
-            return
+            return True
 
         archive_hash = self._sha256(archive_path)
         if archive_hash in self.extracted_archive_hashes:
@@ -201,21 +205,22 @@ class IngestPipeline:
                 decoder_status="archive-loop-detected",
                 limitations="Archive hash was already extracted during this scan.",
             )
-            return
+            return True
         self.extracted_archive_hashes.add(archive_hash)
 
         self._extract_counter += 1
         destination = self.extracted_root / f"archive-{self._extract_counter:04d}"
         destination.mkdir(parents=True, exist_ok=False)
 
+        before_extract_rows = len(self.rows)
         try:
             if zipfile.is_zipfile(archive_path):
                 extracted = self._extract_zip(archive_path, destination, original_input)
             elif tarfile.is_tarfile(archive_path):
                 extracted = self._extract_tar(archive_path, destination, original_input)
             else:
-                return
-        except (OSError, tarfile.TarError, zipfile.BadZipFile) as exc:
+                return False
+        except (OSError, RuntimeError, tarfile.TarError, zipfile.BadZipFile) as exc:
             LOGGER.exception("Archive extraction failed: %s", archive_path)
             self._record_policy_row(
                 artifact_path=archive_path,
@@ -223,16 +228,18 @@ class IngestPipeline:
                 extracted_from=archive_path,
                 artifact_family="unknown",
                 identified_by="extract:error",
-                decoder_status="unreadable",
-                review_mode="unreadable",
+                decoder_status="decode-failed",
+                review_mode="inaccessible",
                 limitations=f"Archive extraction failed: {exc}",
             )
-            return
+            return True
 
+        has_limitations = len(self.rows) > before_extract_rows
         for extracted_path in extracted:
             self._process_file(
                 extracted_path, original_input, extracted_from=archive_path, depth=depth + 1
             )
+        return has_limitations
 
     def _extract_zip(
         self, archive_path: Path, destination: Path, original_input: Path
@@ -248,6 +255,9 @@ class IngestPipeline:
                     self._record_unsafe_archive_member(
                         archive_path, member.filename, original_input, unsafe_reason
                     )
+                    continue
+                if self._zip_member_is_encrypted(member):
+                    self._record_encrypted_zip_member(archive_path, member.filename, original_input)
                     continue
                 if member.file_size > self.limits.max_single_file_bytes:
                     self._record_unsafe_archive_member(
@@ -268,8 +278,17 @@ class IngestPipeline:
                     )
                     continue
                 target.parent.mkdir(parents=True, exist_ok=True)
-                with archive.open(member, "r") as source, target.open("wb") as output:
-                    shutil.copyfileobj(source, output)
+                try:
+                    with archive.open(member, "r") as source, target.open("wb") as output:
+                        shutil.copyfileobj(source, output)
+                except RuntimeError as exc:
+                    if self._is_password_required_error(exc):
+                        self._record_encrypted_zip_member(
+                            archive_path, member.filename, original_input
+                        )
+                        target.unlink(missing_ok=True)
+                        continue
+                    raise
                 extracted.append(target)
         return extracted
 
@@ -340,6 +359,13 @@ class IngestPipeline:
             return None
         return target
 
+    def _zip_member_is_encrypted(self, member: zipfile.ZipInfo) -> bool:
+        return bool(member.flag_bits & 0x1)
+
+    def _is_password_required_error(self, exc: RuntimeError) -> bool:
+        message = str(exc).lower()
+        return "password required" in message or "encrypted" in message
+
     def _zip_unsafe_reason(
         self, member: zipfile.ZipInfo, target: Path | None, destination: Path
     ) -> str | None:
@@ -368,6 +394,35 @@ class IngestPipeline:
         except ValueError:
             return "Archive member would extract outside the workspace."
         return None
+
+    def _record_encrypted_zip_member(
+        self,
+        archive_path: Path,
+        member_name: str,
+        original_input: Path,
+    ) -> None:
+        artifact_path = f"{archive_path}!{member_name}"
+        LOGGER.warning("Encrypted ZIP member skipped: %s", artifact_path)
+        self.rows.append(
+            ArtifactCoverageRow(
+                artifact_path=artifact_path,
+                original_input_path=str(original_input),
+                extracted_from=str(archive_path),
+                artifact_family="unknown",
+                identified_by="archive-member:zip-encrypted",
+                review_mode="skipped-password-required",
+                line_numbers_supported=False,
+                lines_or_rows_scanned=0,
+                bytes_scanned=0,
+                decoded_successfully=False,
+                decoder_used="zipfile",
+                decoder_status="password-required",
+                encoding="",
+                root_cause_value="",
+                related_rule_ids="",
+                limitations="ZIP member is encrypted/password-protected and was not extracted.",
+            )
+        )
 
     def _record_unsafe_archive_member(
         self,

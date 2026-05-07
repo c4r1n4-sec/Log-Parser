@@ -7,7 +7,10 @@
   "paths": {
     "default_output_folder": "output",
     "rules_folder": "rules",
-    "templates_folder": "templates"
+    "templates_folder": "templates",
+    "default_output_base": "Desktop",
+    "default_output_folder_name": "TDSYNNEX-CB-LogParser",
+    "case_folder_template": "Case-{case_number}-scan-{timestamp}"
   },
   "runtime_guards": {
     "network_calls_allowed": false,

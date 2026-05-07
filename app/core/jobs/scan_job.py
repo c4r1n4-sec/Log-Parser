@@ -26,6 +26,7 @@ class ScanResult:
     findings_by_rule_csv: Path
     findings_by_file_csv: Path
     missing_evidence_checklist_txt: Path
+    scan_summary_txt: Path
     triage_report_html: Path
     triage_report_txt: Path
     rows: list[ArtifactCoverageRow]
@@ -68,6 +69,7 @@ def run_ingestion_scan(
         findings_by_rule_csv=shared_result.findings_by_rule_csv,
         findings_by_file_csv=shared_result.findings_by_file_csv,
         missing_evidence_checklist_txt=shared_result.missing_evidence_checklist_txt,
+        scan_summary_txt=shared_result.scan_summary_txt,
         triage_report_html=shared_result.report_html_path,
         triage_report_txt=shared_result.report_txt_path,
         rows=shared_result.rows,
