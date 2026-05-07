@@ -3,6 +3,7 @@ setlocal
 
 echo TDSYNNEX Carbon Black Log Parser
 echo Drag/drop mode
+echo Reports will be written to your Desktop under TDSYNNEX-CB-LogParser.
 echo.
 
 set "BAT_DIR=%~dp0"

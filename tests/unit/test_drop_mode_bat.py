@@ -31,6 +31,10 @@ def test_root_drop_bat_contains_required_drag_drop_behavior() -> None:
     assert "%*" in bat_text
     assert "TDSYNNEX Carbon Black Log Parser" in bat_text
     assert "Drag/drop mode" in bat_text
+    assert (
+        "Reports will be written to your Desktop under TDSYNNEX-CB-LogParser."
+        in bat_text
+    )
 
 
 def test_drop_mode_readme_documents_manual_bat_validation() -> None:
@@ -40,7 +44,12 @@ def test_drop_mode_readme_documents_manual_bat_validation() -> None:
     assert readme_path.exists()
     assert "Unzip the portable package" in readme_text
     assert "Drag customer files or folders onto DROP-CUSTOMER-LOGS-HERE.bat" in readme_text
-    assert "Documents\\TDSYNNEX-CB-LogParser" in readme_text
+    assert (
+        "%USERPROFILE%\\Desktop\\TDSYNNEX-CB-LogParser\\Case-60114450-scan-YYYYMMDD-HHMMSS"
+        in readme_text
+    )
+    assert "Documents\\TDSYNNEX-CB-LogParser" not in readme_text
+    assert "bundled output folder" not in readme_text
     assert "open triage_report.html" in readme_text.lower()
     assert "local-only" in readme_text
     assert "No logs are uploaded" in readme_text
